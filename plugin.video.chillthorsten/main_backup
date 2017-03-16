@@ -1,0 +1,85 @@
+
+# -*- coding: utf-8 -*-
+
+import sys
+from urllib import urlencode
+from urllib2 import urlopen # Weil Python2.x
+from urlparse import parse_qsl
+import xbmcgui
+import xbmcplugin
+import re
+from ConfigParser import ConfigParser
+#############################
+
+# To do:
+# Configdatei mit Datum auslesen. Funktioniert bisher nicht. Configparser geht nicht
+#Error Type: <class 'ConfigParser.NoSectionError'>
+#Error Contents: No section: 'videooptions'
+
+class Chillkodi(): 
+	def __init__(self,anchor,startdatum):
+		''' Initiieren durch holen der wichtigen Daten mittels der ersten URL aus übergebenen Variable anchor. Muss später aus irgendeiner config-Datei geladen werden '''
+		self._URL = anchor # Übergeben der Start-URL
+		self._Page = self.page_holen(self._URL)
+		self._Datum = self.hole_Datum() # Struktur _Datum[0] - Jahr , _Datum[1] - Monat , _Datum[2] - Tag
+		self.hole_titel()
+		self.hole_videolink()
+		''' Hier noch Konstant, kann später noch angepasst werden '''
+		self.li = xbmcgui.ListItem(self.titel, iconImage='http://eu6.cdn.internetz.me/coz/_images/thumbnails/22100/22110-bohrmaschinensaufen-5571b788e97ea-150x90.jpg')
+		self.Add_Video()	
+		self.Startdatum = startdatum
+		self.Testadd(startdatum)
+	def Testadd(self,Testwert):
+		li = xbmcgui.ListItem(Testwert, iconImage='http://eu6.cdn.internetz.me/coz/_images/thumbnails/22100/22110-bohrmaschinensaufen-5571b788e97ea-150x90.jpg')
+		xbmcplugin.addDirectoryItem(handle=addon_handle, url=self.videolink, listitem=li)
+
+	def page_holen(self, url): # Herunterladen einer URL
+		resp = urlopen(url)
+		contents = resp.read()
+		return contents.decode('utf8')
+
+	def hole_titel(self):
+		self.titel = re.search(r"(contentTitle)(.*)(=)(.*)(;)",self._Page)
+		if self.titel is not None:
+			self.titel = self.titel.group(4)
+			self.titel = (self.titel[2:len(self.titel)-1])
+		else:
+			self.titel = "Kein Titel gefunden"	
+
+	def hole_videolink(self):
+		self.videolink = re.search(r"(MOVIE_LOC_PLAIN)(.*)(http.*mp4)",self._Page)
+		if self.videolink is not None:
+			self.videolink = self.videolink.group(3)
+		else:
+			self.videolink = "Kein Link gefunden"	
+
+	def Add_Video(self):
+		xbmcplugin.addDirectoryItem(handle=addon_handle, url=self.videolink, listitem=self.li)
+
+	def hole_Datum(self):
+		match = re.search(r"(date.*)([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9])",self._Page)
+		self._Datum = []
+		if (match != None):
+			self._Datum.append(match.group(2))
+			self._Datum.append(match.group(3))
+			self._Datum.append(match.group(4)) 
+
+	# Vorbereitung
+addon_handle = int(sys.argv[1])
+	# Dass es um Videos geht
+xbmcplugin.setContent(addon_handle, 'movies')
+# Das mit dem Parser funktioniert nicht
+parser = ConfigParser()
+parser.read('config.ini')
+startdatum = parser.get('videooptions','datum')		
+	# Erste Seite und Chillkodi mit ck initialisieren
+anchor = "http://www.chilloutzone.net/video/anti-vorfreude-auf-ostern.html"
+ck = Chillkodi(anchor,startdatum)
+
+
+xbmcplugin.endOfDirectory(addon_handle)
+
+
+
+
+

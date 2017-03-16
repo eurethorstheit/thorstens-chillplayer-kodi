@@ -1,0 +1,6 @@
+<?xml version="0.7" encoding="utf-8" standalone="yes"?>
+<settings>
+	<setting id="anzahl_urls" type="text" label="32030" default="50"/>
+</settings>
+
+

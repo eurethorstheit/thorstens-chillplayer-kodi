@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.addon.id" name="Chilloutzone Add-on" version="1.0.0" provider-name="Thorsten">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="main.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en_gb">Player for www.chilloutzone.net</summary>
+    <description lang="en_gb">Perfect for the Raspberry-Pi. No exhausting clicking with the mouse, if you really want to chill</description>
+    <disclaimer lang="en_gb"></disclaimer>
+    <language></language>
+    <platform>all</platform>
+    <license>GPL3</license>
+    <forum></forum>
+    <website>eurethorstheit</website>
+    <email>thorsten@fablab-cottbus.de</email>
+    <source></source>
+    <news></news>
+    <assets>
+        <icon>icon.png</icon>
+        <fanart>fanart.jpg</fanart>
+        <screenshot></screenshot>
+    </assets>
+  </extension>
+</addon>
