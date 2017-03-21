@@ -1,6 +1,6 @@
 <?xml version="0.7" encoding="utf-8" standalone="yes"?>
 <settings>
-	<setting id="anzahl_urls" type="text" label="32030" default="50"/>
+	<setting type="sep"/>
+	<setting id="anzahl_urls" type="number" label="Anzahl der Videos in der Liste" default="50" visible=true enable=true/>
+	<setting type="sep"/>
 </settings>
-
-
