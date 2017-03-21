@@ -12,10 +12,9 @@ import re
 
 #############################
 
-# To do for V 1.0.2:
-# Anzahl Videos minus 1 
-	#	check
-#
+# To do: 
+# in ../testen mit der Datei hole_video.py versuchen, Listen von chilloutzone zu holen mit den Werten:
+# URL, TITEL, mit dem aktuellen Datum bis in die Vergangenheit
 
 class Chillkodi(): 
 	def __init__(self,anzahl_urls):
@@ -122,7 +121,7 @@ xbmcplugin.setContent(addon_handle, 'movies')
 #anchor_url = "http://www.chilloutzone.net/video/anti-vorfreude-auf-ostern.html"
 settings = xbmcaddon.Addon()
 try:
-	anzahl_urls = int(settings.getSetting('anzahl_urls')) - 1
+	anzahl_urls = int(settings.getSetting('anzahl_urls'))
 except ValueError:
 	print("Ein Fehler ist aufgetreten. In der settings.xml muss bei anzahl_urls eine ganze Zahl stehen. Bitte überprüfen")
 	exit()
