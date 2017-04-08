@@ -9,19 +9,22 @@ import xbmcgui
 import xbmcplugin
 import xbmcaddon
 import re
-from subprocess import call, check_output
 
 #############################
 
-# To do: 
-# in ../testen mit der Datei hole_video.py versuchen, Listen von chilloutzone zu holen mit den Werten:
-# URL, TITEL, mit dem aktuellen Datum bis in die Vergangenheit
+# To do for V 1.0.2:
+# Anzahl Videos minus 1 
+	#	check
+# Neue Videos laden, wenn Ende der Liste erreicht
+	#self._Anchor_URL erstellt <die letzte URL>
+	# diese muss nun während der Laufzeit ausgelesen werden.
 
 class Chillkodi(): 
 	def __init__(self,anzahl_urls):
 		''' Initiieren durch holen der wichtigen Daten mittels der ersten URL aus übergebenen Variable anchor. Muss später aus irgendeiner config-Datei geladen werden '''
 		self._Anzahl_URLS = anzahl_urls	
 		self._URL = self.hole_neuste_url() # Übergeben der Start-URL
+		self._Anchor_URL = ""
 		self._Page = self.page_holen(self._URL)
 		self._picture = ""
 		self.hole_picture()
@@ -67,6 +70,7 @@ class Chillkodi():
 			next = self.Lade_Next()
 			self.Add_Video()
 			x = x + 1
+		self._Anchor_URL = self._URL
 
 	def Lade_Next(self):	
 		''' Das von der aktuellen Seite self._Page ausgehend nächste Video wird von hier aus geladen ''' 
@@ -100,7 +104,11 @@ class Chillkodi():
 			self.titel = "Kein Titel gefunden"	
 
 	def hole_videolink(self):
-		self.videolink = check_output(['youtube-dl',self._URL,'--get-url']).rstrip()
+		self.videolink = re.search(r"(MOVIE_LOC_PLAIN)(.*)(http.*mp4)",self._Page)
+		if self.videolink is not None:
+			self.videolink = self.videolink.group(3)
+		else:
+			self.videolink = "Kein Link gefunden"	
 
 	def Add_Video(self):
 		''' Hinzufügen des Videos, nachdem mit Lade_Next alle Daten geholt wurden '''	
@@ -118,7 +126,7 @@ xbmcplugin.setContent(addon_handle, 'movies')
 #anchor_url = "http://www.chilloutzone.net/video/anti-vorfreude-auf-ostern.html"
 settings = xbmcaddon.Addon()
 try:
-	anzahl_urls = int(settings.getSetting('anzahl_urls'))
+	anzahl_urls = int(settings.getSetting('anzahl_urls')) - 1
 except ValueError:
 	print("Ein Fehler ist aufgetreten. In der settings.xml muss bei anzahl_urls eine ganze Zahl stehen. Bitte überprüfen")
 	exit()
